@@ -9,32 +9,13 @@ from gtts import gTTS
 import logging
 from playsound import playsound
 from datetime import datetime
-#import path
 
-#log = logging.getLogger(__name__)
-#log.setLevel(logging.DEBUG)
-##create formatter and add it to the handlers
-#formatter = logging.Formatter('%(asctime)s: %(name)s: %(levelname)s: %(message)s')
-#
-## create file handler which logs even debug messages
-#fh = logging.FileHandler('status.log')
-#fh.setLevel(logging.DEBUG)
-#fh.setFormatter(formatter)
-#log.addHandler(fh)
-#
-## create console handler with a higher log level
+log = logging.getLogger("voice")
 #ch = logging.StreamHandler()
 #ch.setLevel(logging.INFO)
+#formatter = logging.Formatter('%(asctime)s: %(name)s: %(levelname)s: %(message)s')
 #ch.setFormatter(formatter)
 #log.addHandler(ch)
-#
-logging.basicConfig(format="%(asctime)s: [%(levelname)s], %(message)s", filename="status.log", level=logging.INFO)
-log = logging.getLogger(__name__)
-ch = logging.StreamHandler()
-ch.setLevel(logging.INFO)
-formatter = logging.Formatter('%(asctime)s: %(name)s: %(levelname)s: %(message)s')
-ch.setFormatter(formatter)
-log.addHandler(ch)
 
 class voice:
     
@@ -42,28 +23,26 @@ class voice:
         self.user = user
         self.assistent = assistent
     
-    def speak(self, audioString, out_dir='temp_audio'):
+    def speak(self, audio_string, out_dir='_temp'):
         if not os.path.isdir(out_dir):
             os.mkdir(out_dir)
         filename = datetime.now().strftime('%Y%m%d_%H%M%S') + '.mp3'  
         filepath = os.path.join(out_dir, filename)
-        log.info(F"{self.assistent}: {audioString}")
-        tts = gTTS(text=audioString, lang='de')
+        log.info(F"{self.assistent}: {audio_string}")
+        tts = gTTS(text=audio_string, lang='de')
         tts.save(filepath)
         playsound(filepath)
     
     def listen(self):
-        # Record Audio
         r = sr.Recognizer()
         with sr.Microphone() as source:
             log.info("Wait for input")
             audio = r.listen(source)
             data = ""
             try:
-                # Uses the default API key
                 # To use another API key: `r.recognize_google(audio, key="GOOGLE_SPEECH_RECOGNITION_API_KEY")`
                 data = r.recognize_google(audio, language='de-DE')        
-                log.info(F"{voice.user}: {data}")
+                log.info(F"{self.user}: {data}")
             except sr.UnknownValueError:
                 log.warning("Please try again.")
             except sr.RequestError as e:
@@ -88,7 +67,7 @@ class voice:
             os.system("chromium-browser https://www.google.nl/maps/place/" + location + "/&amp;")
          
         if any(s in data for s in ["beenden", "beende", "exit", "schließen"]):
-            self.speak("Adee")
+            self.speak("Okay")
             ret_val = 0
             
         return ret_val 
