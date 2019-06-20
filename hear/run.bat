@@ -1,2 +1,2 @@
-python.exe speech_recognition.py
+C:\Users\Blitzliner\AppData\Local\Programs\Python\Anaconda3\python.exe recognition.py
 pause
